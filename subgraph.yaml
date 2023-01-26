@@ -1,0 +1,25 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DNft
+    network: goerli
+    source:
+      address: "0xe08613072099dC5b83669bBef104Ac49271e3BF9"
+      abi: DNft
+      startBlock: 8370514
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - DNft
+        - User
+      abis:
+        - name: DNft
+          file: ./abis/DNft.json
+      eventHandlers:
+        - event: Minted(indexed address,indexed uint256)
+          handler: handleMinted
+      file: ./src/mapping.ts
