@@ -1,6 +1,9 @@
 {
   "name": "cryptocoventarc",
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=16.18.1"
+  },
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
