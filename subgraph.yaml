@@ -8,9 +8,9 @@ dataSources:
     name: DNft
     network: goerli
     source:
-      address: "0x5b2718A7cE8055C0aAE8736D9614477d0C0104EE"
+      address: "0x4F3b5c4a8b6E0970Ade3152D08700d4868cc16ea"
       abi: DNft
-      startBlock: 8401441
+      startBlock: 8404925
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -22,10 +22,18 @@ dataSources:
         - name: DNft
           file: ./abis/DNft.json
       eventHandlers:
-        - event: Minted(indexed address,indexed uint256)
-          handler: handleMinted
-        - event: XpIncreased(indexed uint256,uint256)
-          handler: handleXpIncreased
+        - event: DepositUpdated(indexed uint256,int256)
+          handler: handleDepositUpdated
         - event: Deposited(indexed uint256,uint256)
           handler: handleDeposited
+        - event: Minted(indexed address,indexed uint256)
+          handler: handleMinted
+        - event: IsActiveUpdated(indexed uint256,bool)
+          handler: handleIsActiveUpdated
+        - event: Withdrawn(indexed uint256,indexed address,uint256)
+          handler: handleWithdrawn
+        - event: WithdrawalUpdated(indexed uint256,uint256)
+          handler: handleWithdrawalUpdated
+        - event: XpUpdated(indexed uint256,uint256)
+          handler: handleXpUpdated
       file: ./src/mapping.ts

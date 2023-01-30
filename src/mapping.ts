@@ -1,11 +1,40 @@
 import { BigInt } from '@graphprotocol/graph-ts';
 import {
   Deposited as DepositedEvent,
+  DepositUpdated as DepositUpdatedEvent,
+  IsActiveUpdated as IsActiveUpdatedEvent,
   Minted as MintedEvent,
-  XpIncreased as XpIncreasedEvent,
+  WithdrawalUpdated as WithdrawalUpdatedEvent,
+  Withdrawn as WithdrawnEvent,
+  XpUpdated as XpUpdatedEvent,
 } from '../generated/DNft/DNft';
 import { DNft, User } from '../generated/schema';
 
+/// For initial deposit
+export function handleDepositUpdated(event: DepositUpdatedEvent): void {
+  let dNft = DNft.load(event.params.id.toString());
+
+  if (!dNft) {
+    return;
+  }
+
+  dNft.deposit = dNft.deposit.plus(event.params.deposit);
+  dNft.save();
+}
+
+/// For subsequent deposits
+export function handleDeposited(event: DepositedEvent): void {
+  let dNft = DNft.load(event.params.id.toString());
+
+  if (!dNft) {
+    return;
+  }
+
+  dNft.deposit = dNft.deposit.plus(event.params.amount);
+  dNft.save();
+}
+
+/// Creates DNft entities on mint
 export function handleMinted(event: MintedEvent): void {
   let dNft = new DNft(event.params.id.toString());
 
@@ -26,25 +55,18 @@ export function handleMinted(event: MintedEvent): void {
   }
 }
 
-export function handleXpIncreased(event: XpIncreasedEvent): void {
+// TODO
+export function handleIsActiveUpdated(event: IsActiveUpdatedEvent): void {}
+export function handleWithdrawn(event: WithdrawnEvent): void {}
+export function handleWithdrawalUpdated(event: WithdrawalUpdatedEvent): void {}
+
+export function handleXpUpdated(event: XpUpdatedEvent): void {
   let dNft = DNft.load(event.params.id.toString());
 
   if (!dNft) {
     return;
   }
 
-  dNft.xp = dNft.xp.plus(event.params.amount);
-  dNft.save();
-}
-
-// how does initial dyad get minted?
-export function handleDeposited(event: DepositedEvent): void {
-  let dNft = DNft.load(event.params.id.toString());
-
-  if (!dNft) {
-    return;
-  }
-
-  dNft.deposit = event.params.amount;
+  dNft.xp = event.params.xp;
   dNft.save();
 }
