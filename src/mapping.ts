@@ -1,83 +1,50 @@
-// mapping is for
-// eventHandlers functions
-// allows us to talk to graph node + smart contract + ipfs
-// run `graph codegen` to help generate code for these imports
+import { BigInt } from '@graphprotocol/graph-ts';
+import {
+  Deposited as DepositedEvent,
+  Minted as MintedEvent,
+  XpIncreased as XpIncreasedEvent,
+} from '../generated/DNft/DNft';
+import { DNft, User } from '../generated/schema';
 
-// apis for graph node itself (the db)
-// import { Token, User } from '../generated/schema';
+export function handleMinted(event: MintedEvent): void {
+  let dNft = new DNft(event.params.id.toString());
 
-// import {
-//   Transfer as TransferEvent,
-//   Token as TokenContract,
-// } from '../generated/Token/Token';
+  dNft.xp = BigInt.fromString('0'); // init to 0, will update in handleXpIncreased
+  dNft.deposit = BigInt.fromString('0'); // init to 0, will update in handleDeposited
+  dNft.withdrawal = BigInt.fromString('0');
+  dNft.lastOwnershipChange = event.block.number;
+  dNft.isActive = true;
+  dNft.owner = event.params.to.toHexString();
 
-// import { ipfs, json } from '@graphprotocol/graph-ts';
+  dNft.save();
 
-// const ipfshash = 'QmaXzZhcYnsisuue5WRdQDH6FDvqkLQX1NckLqBYeYYEfm';
+  // Associate the DNft with its user
+  let user = User.load(event.params.to.toHexString());
+  if (!user) {
+    user = new User(event.params.to.toHexString());
+    user.save();
+  }
+}
 
-// // defined in ABI + subgraph.yaml + contract
-// export function handleTransfer(event: TransferEvent): void {
-//   let token = Token.load(event.params.tokenId.toString());
-//   // first time token is being created
-//   if (!token) {
-//     token = new Token(event.params.tokenId.toString());
-//     token.tokenID = event.params.tokenId;
+export function handleXpIncreased(event: XpIncreasedEvent): void {
+  let dNft = DNft.load(event.params.id.toString());
 
-//     token.tokenURI = '/' + event.params.tokenId.toString() + '.json'; // build fuly qualified ipfs uri
+  if (!dNft) {
+    return;
+  }
 
-//     // call out to ipfs to get metadata
-//     let metadata = ipfs.cat(ipfshash + token.tokenURI);
+  dNft.xp = event.params.totalXp;
+  dNft.save();
+}
 
-//     if (metadata) {
-//       const value = json.fromBytes(metadata).toObject();
-//       if (value) {
-//         // .get to pluck properties off the json metadata in ipfs
-//         const image = value.get('image');
-//         const name = value.get('name');
-//         const description = value.get('description');
-//         const externalURL = value.get('external_url');
-//         if (name && image && description && externalURL) {
-//           token.image = image.toString();
-//           token.name = name.toString();
-//           token.description = description.toString();
-//           token.externalURL = externalURL.toString();
-//           token.ipfsURI = 'ipfs.io/ipfs/' + ipfshash + token.tokenURI;
-//         }
+// how does initial dyad get minted?
+export function handleDeposited(event: DepositedEvent): void {
+  let dNft = DNft.load(event.params.id.toString());
 
-//         const coven = value.get('coven');
-//         if (coven) {
-//           let covenData = coven.toObject();
-//           const type = covenData.get('type');
-//           if (type) {
-//             token.type = type.toString();
-//           }
+  if (!dNft) {
+    return;
+  }
 
-//           const birthChart = covenData.get('birthChart');
-//           if (birthChart) {
-//             const birthChartData = birthChart.toObject();
-//             const sun = birthChartData.get('sun');
-//             const moon = birthChartData.get('moon');
-//             const rising = birthChartData.get('rising');
-//             if (sun && moon && rising) {
-//               token.sun = sun.toString();
-//               token.moon = moon.toString();
-//               token.rising = rising.toString();
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   token.updatedAtTimestamp = event.block.timestamp.toString();
-//   token.owner = event.params.to.toHexString();
-//   token.save();
-
-//   let user = User.load(event.params.to.toHexString());
-//   if (!user) {
-//     user = new User(event.params.to.toHexString());
-//     user.save();
-//   }
-// }
-
-
+  dNft.deposit = event.params.amount;
+  dNft.save();
+}

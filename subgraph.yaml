@@ -1,4 +1,6 @@
-specVersion: 0.0.5
+specVersion: 0.0.4
+description: Subgraph for the DYAD Protocol
+repository: https://github.com/DYAD/dyad-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -6,9 +8,9 @@ dataSources:
     name: DNft
     network: goerli
     source:
-      address: "0xe08613072099dC5b83669bBef104Ac49271e3BF9"
+      address: "0x181a3FF7f1a7cC5dBF939968214bCF2Faa9B2735"
       abi: DNft
-      startBlock: 8370514
+      startBlock: 8401154
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -22,4 +24,8 @@ dataSources:
       eventHandlers:
         - event: Minted(indexed address,indexed uint256)
           handler: handleMinted
+        - event: XpIncreased(indexed uint256,uint256)
+          handler: handleXpIncreased
+        - event: Deposited(indexed uint256,uint256)
+          handler: handleDeposited
       file: ./src/mapping.ts

@@ -1,14 +1,14 @@
 type DNft @entity {
   id: ID!
-  xp: Int!
-  deposit: Int!
-  withdrawal: Int!
-  lastOwnershipChange: Int!
+  xp: BigInt!
+  deposit: BigInt!
+  withdrawal: BigInt!
+  lastOwnershipChange: BigInt!
   isActive: Boolean!
   owner: User!
 }
 
 type User @entity {
   id: ID!
-  tokens: [DNft!]! @derivedFrom(field: "owner")
+  dNfts: [DNft!]! @derivedFrom(field: "owner")
 }
