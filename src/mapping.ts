@@ -18,19 +18,7 @@ export function handleDepositUpdated(event: DepositUpdatedEvent): void {
     return;
   }
 
-  dNft.deposit = dNft.deposit.plus(event.params.deposit);
-  dNft.save();
-}
-
-/// For subsequent deposits
-export function handleDeposited(event: DepositedEvent): void {
-  let dNft = DNft.load(event.params.id.toString());
-
-  if (!dNft) {
-    return;
-  }
-
-  dNft.deposit = dNft.deposit.plus(event.params.amount);
+  dNft.deposit = event.params.deposit;
   dNft.save();
 }
 
@@ -56,9 +44,27 @@ export function handleMinted(event: MintedEvent): void {
 }
 
 // TODO
-export function handleIsActiveUpdated(event: IsActiveUpdatedEvent): void {}
-export function handleWithdrawn(event: WithdrawnEvent): void {}
-export function handleWithdrawalUpdated(event: WithdrawalUpdatedEvent): void {}
+export function handleIsActiveUpdated(event: IsActiveUpdatedEvent): void {
+  let dNft = DNft.load(event.params.id.toString());
+
+  if (!dNft) {
+    return;
+  }
+
+  dNft.isActive = event.params.isActive;
+  dNft.save();
+}
+
+export function handleWithdrawalUpdated(event: WithdrawalUpdatedEvent): void {
+  let dNft = DNft.load(event.params.id.toString());
+
+  if (!dNft) {
+    return;
+  }
+
+  dNft.withdrawal = event.params.withdrawal;
+  dNft.save();
+}
 
 export function handleXpUpdated(event: XpUpdatedEvent): void {
   let dNft = DNft.load(event.params.id.toString());

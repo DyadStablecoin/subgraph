@@ -24,14 +24,10 @@ dataSources:
       eventHandlers:
         - event: DepositUpdated(indexed uint256,int256)
           handler: handleDepositUpdated
-        - event: Deposited(indexed uint256,uint256)
-          handler: handleDeposited
         - event: Minted(indexed address,indexed uint256)
           handler: handleMinted
         - event: IsActiveUpdated(indexed uint256,bool)
           handler: handleIsActiveUpdated
-        - event: Withdrawn(indexed uint256,indexed address,uint256)
-          handler: handleWithdrawn
         - event: WithdrawalUpdated(indexed uint256,uint256)
           handler: handleWithdrawalUpdated
         - event: XpUpdated(indexed uint256,uint256)
