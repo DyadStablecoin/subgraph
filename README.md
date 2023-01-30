@@ -15,6 +15,7 @@ graph codegen
 graph build
 ```
 
+If you make contract changes, like to emit a new event, `cd` into the contracts directory, rebuild the ABIs with `forge build`, and copy them into the `abis/` directory in this repository.
 
 ## Deploy
 

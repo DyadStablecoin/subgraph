@@ -33,7 +33,7 @@ export function handleXpIncreased(event: XpIncreasedEvent): void {
     return;
   }
 
-  dNft.xp = event.params.totalXp;
+  dNft.xp = dNft.xp.plus(event.params.amount);
   dNft.save();
 }
 
